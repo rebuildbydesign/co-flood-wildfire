@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Colorado Wildfire + Flood Map (Draft)</title>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 fill=%22%233a7fc3%22/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <aside id="sidebar" class="sidebar">
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-expanded="false" aria-controls="sidebar-body">Map Controls</button>
+    <header class="sidebar-head">
+      <h1>Colorado Wildfire + Flood Map</h1>
+      <span class="draft-badge">Draft</span>
+    </header>
+    <div id="sidebar-body" class="sidebar-body">
+      <p class="intro placeholder">Intro text to come.</p>
+
+      <h2>Step 1: Find a Place</h2>
+      <div class="segmented" role="radiogroup" aria-label="Add up the numbers by">
+        <button role="radio" data-view="county" aria-checked="true">County</button>
+        <button role="radio" data-view="town" aria-checked="false">Town</button>
+      </div>
+      <label class="sr-only" for="place-select">Pick a place</label>
+      <select id="place-select"></select>
+      <div id="geocoder" class="geocoder"></div>
+
+      <h2>Step 2: Pick a Hazard</h2>
+      <div class="hazards">
+        <button class="hazard" data-hazard="flood" aria-pressed="true" style="--c: var(--flood)"><span class="swatch"></span>Flood Today</button>
+        <button class="hazard" data-hazard="fire" aria-pressed="false" disabled style="--c: var(--fire)"><span class="swatch"></span>Wildfire Today<small>Coming Soon</small></button>
+        <button class="hazard" data-hazard="both" aria-pressed="false" disabled style="--c: var(--both)"><span class="swatch"></span>Flood x Wildfire Today<small>Coming Soon</small></button>
+      </div>
+
+      <h2>Step 3: Public Assets</h2>
+      <button id="assets-toggle" class="pill" aria-pressed="false">Show Public Assets</button>
+      <fieldset id="asset-types" class="asset-types" hidden>
+        <legend class="sr-only">Asset types</legend>
+        <div class="asset-types-actions">
+          <button type="button" data-all="1">All</button>
+          <button type="button" data-all="0">None</button>
+        </div>
+        <div id="asset-type-list"></div>
+      </fieldset>
+    </div>
+  </aside>
+
+  <main id="map" class="map" aria-label="Map of Colorado flood risk">
+    <div class="map-logo">REBUILD<br>BY<br>DESIGN</div>
+    <section id="finding" class="finding" aria-label="Statewide numbers"></section>
+    <div id="legend" class="legend"></div>
+    <button id="info-btn" class="info-btn" aria-label="About the data">i</button>
+  </main>
+
+  <section id="panel" class="panel" hidden aria-live="polite">
+    <button id="panel-close" class="panel-close" aria-label="Close">&times;</button>
+    <div id="panel-body"></div>
+  </section>
+
+  <dialog id="about" class="about">
+    <button class="panel-close" data-close aria-label="Close">&times;</button>
+    <div id="about-body"></div>
+  </dialog>
+
+  <div id="loading" class="loading">Loading map…</div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
