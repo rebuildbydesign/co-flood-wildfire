@@ -66,7 +66,10 @@ function whereList(p, places) {
   const crosses = shown.some((t) => t.counties.length > 1);
   return `<div class="where">
     <h3>High Flood Risk Properties, by Town</h3>
-    <ul>${shown.map((t) => `<li><button data-goto="${t.id}">${esc(t.name)}${t.counties.length > 1 ? '*' : ''}</button><span>${count(t.flood.parcels)}</span></li>`).join('')}</ul>
+    <ul>${shown.map((t) => `<li><button class="where-row" data-goto="${t.id}">
+      <span class="where-name">${esc(t.name)}${t.counties.length > 1 ? '*' : ''}</span>
+      <span class="where-value">${count(t.flood.parcels)}</span><span class="where-arrow" aria-hidden="true">›</span>
+    </button></li>`).join('')}</ul>
     ${rows.length > WHERE_ROWS ? `<p class="fine">${rows.length - WHERE_ROWS} more towns with high flood risk properties.</p>` : ''}
     ${crosses ? '<p class="fine">* Whole town, including parts in other counties.</p>' : ''}
   </div>`;
@@ -83,9 +86,10 @@ function header(p) {
   const where = p.level === 'town' ? `<p class="ctx">${esc(countyNames(p.counties))}</p>` : '';
   const props = p.no_parcels ? 'No property data from the state'
     : `<b>${count(p.parcels)}</b> properties${p.no_fema ? '' : ` · <b>${count(p.flood.parcels)}</b> (${pct(p.flood.share)}) at high flood risk`}`;
-  const back = p.level === 'town' && p.county_ids.length === 1
-    ? `<button class="link" data-goto="${p.county_ids[0]}">See ${esc(p.counties[0])}</button>` : '';
-  return `<header class="place-head"><span class="kind">${kind}</span><h2>${esc(p.name)}</h2>${where}<p class="ctx">${props}</p>${back}</header>`;
+  const back = p.level === 'town'
+    ? `<nav class="back-row">${p.county_ids.map((id, i) =>
+      `<button class="back-btn" data-goto="${id}">‹ Back to ${esc(p.counties[i])}</button>`).join('')}</nav>` : '';
+  return `${back}<header class="place-head"><span class="kind">${kind}</span><h2>${esc(p.name)}</h2>${where}<p class="ctx">${props}</p></header>`;
 }
 
 export function placePanel(p, places) {
@@ -115,6 +119,11 @@ export function assetPopup(f) {
     ${place ? `<span>${esc(place)}</span>` : ''}
     <span class="flood-tag tag-${a.f}">${ASSET_FLOOD[a.f]}</span>
   </div>`;
+}
+
+export function assetTip(f) {
+  const a = f.properties;
+  return `<div class="asset-tip"><strong>${esc(titleCase(a.n) || ASSET_TYPES[a.a])}</strong><span class="tag-${a.f}">${ASSET_FLOOD[a.f]}</span></div>`;
 }
 
 export function finding(state) {

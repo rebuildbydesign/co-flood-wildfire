@@ -12,14 +12,14 @@ export const VIEWS = {
 export const COLORS = {
   flood: '#3a7fc3', floodLite: '#a5d5f1',
   hatchBg: '#26292b', hatchLine: '#6d7275',
-  assetNo: '#8a8f93', outline: '#0c0d0e', selected: '#ffffff',
+  assetNo: '#5f6468', outline: '#0c0d0e', selected: '#ffffff',
 };
 
 // Share of properties at high flood risk. Upper bounds per class.
 export const FLOOD_RAMP = {
   title: 'Share of Properties at High Flood Risk',
   stops: [0.01, 0.03, 0.10],
-  colors: ['#1c3045', '#2a5784', '#3a7fc3', '#a5d5f1'],
+  colors: ['#1c3045', '#2a5784', '#3a7fc3', '#a5d5f1'], // brighter = more (dark = more blended into the basemap)
   labels: ['Under 1%', '1–3%', '3–10%', '10%+'],
 };
 

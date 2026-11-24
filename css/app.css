@@ -52,10 +52,12 @@ select { width: 100%; padding: 9px 10px; background: #2b2b2b; color: #fff; borde
 .asset-types-actions button { background: none; border: 0; padding: 0; color: var(--flood-lite); text-decoration: underline; cursor: pointer; font-size: 14px; }
 .check { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 14px; color: #ddd; cursor: pointer; }
 .check input { accent-color: var(--flood-lite); margin: 0; }
+.check-count { margin-left: auto; color: var(--dim); font-variant-numeric: tabular-nums; font-size: 13px; }
 
 /* ---------- map ---------- */
 .map { position: fixed; inset: 0 0 0 var(--sidebar-w); }
-.map-logo { position: absolute; left: 20px; top: 16px; z-index: 2; border-left: 2px solid #fff; padding-left: 8px; font-weight: 700; font-size: 16px; line-height: 1.05; pointer-events: none; }
+.map-logo { position: absolute; left: 20px; top: 16px; z-index: 2; pointer-events: none; }
+.map-logo img { display: block; width: 80px; height: auto; }
 .finding { position: absolute; right: 56px; top: 16px; width: 290px; z-index: 2; background: rgba(0,0,0,.86); border-left: 10px solid var(--flood); padding: 14px 16px; }
 .finding p { margin: 6px 0 0; color: #ddd; }
 .finding b { color: #fff; font-size: 18px; }
@@ -71,9 +73,9 @@ select { width: 100%; padding: 9px 10px; background: #2b2b2b; color: #fff; borde
 .sw-floodplain { background: rgba(58,127,195,.6); }
 .sw-parcel { background: var(--flood-lite); }
 .dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 4px; flex: none; }
-.dot-y { background: var(--flood-lite); border: 1px solid #000; }
-.dot-n { background: #8a8f93; border: 1px solid #000; }
-.dot-m { border: 1.5px solid #9aa0a4; }
+.dot-y { width: 13px; height: 13px; margin: 0 2.5px; background: var(--flood-lite); border: 1.5px solid #fff; }
+.dot-n { width: 8px; height: 8px; margin: 0 5px; background: #5f6468; border: 1px solid #000; }
+.dot-m { width: 8px; height: 8px; margin: 0 5px; border: 1px solid #7d8286; }
 
 .info-btn { position: absolute; right: 12px; bottom: 30px; z-index: 2; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #fff; background: #000; font-weight: 700; font-style: italic; cursor: pointer; }
 .loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 10; color: var(--muted); }
@@ -114,9 +116,15 @@ select { width: 100%; padding: 9px 10px; background: #2b2b2b; color: #fff; borde
 .bar-fill { display: block; height: 100%; background: var(--flood); min-width: 2px; }
 .bar-value { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; white-space: nowrap; }
 .where ul { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 2px; }
-.where li { display: flex; justify-content: space-between; font-size: 14px; border-bottom: 1px solid #2c2c2c; padding: 3px 0; }
-.where li button { background: none; border: 0; padding: 0; color: #fff; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: #555; }
-.where li span { color: var(--flood-lite); font-variant-numeric: tabular-nums; }
+.where-row { width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: #2a2a2a; border: 1px solid transparent; font-size: 14px; color: #fff; text-align: left; cursor: pointer; }
+.where-row:hover, .where-row:focus-visible { background: #34404c; border-color: var(--flood-lite); outline: none; }
+.where-name { flex: 1; }
+.where-value { color: var(--flood-lite); font-variant-numeric: tabular-nums; }
+.where-arrow { color: var(--muted); font-size: 18px; line-height: 1; }
+.where-row:hover .where-arrow { color: #fff; }
+.back-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.back-btn { padding: 7px 12px; background: #fff; color: #000; border: 0; font-size: 14px; font-weight: 700; cursor: pointer; }
+.back-btn:hover, .back-btn:focus-visible { background: var(--flood-lite); outline: none; }
 
 /* ---------- map popups ---------- */
 .map-pop .mapboxgl-popup-content { background: #111; color: #fff; padding: 10px 26px 10px 12px; border-radius: 0; font-family: var(--font); }
@@ -126,7 +134,11 @@ select { width: 100%; padding: 9px 10px; background: #2b2b2b; color: #fff; borde
 .asset-pop strong { font-size: 15px; }
 .asset-pop span { color: var(--muted); }
 .flood-tag { margin-top: 4px; font-weight: 700; }
-.asset-pop .tag-y { color: var(--flood-lite); }
+.asset-pop .tag-y, .asset-tip .tag-y { color: var(--flood-lite); }
+.hover-pop { pointer-events: none; }
+.hover-pop .mapboxgl-popup-content { padding: 6px 10px; }
+.asset-tip { display: flex; flex-direction: column; font-size: 14px; }
+.asset-tip span { color: var(--muted); font-size: 13px; }
 
 /* ---------- about ---------- */
 .about { max-width: 560px; background: var(--surface); color: var(--fg); border: 1px solid var(--line); padding: 20px 24px; }

@@ -1,16 +1,17 @@
 // Wires the sidebar, map and panel together. All numbers come prebuilt from data/.
 
 import { ASSET_TYPES, BASEMAP, CO_BOUNDS, MAPBOX_TOKEN, VIEWS, ZOOM } from './config.js';
+import { count } from './format.js';
 import { bbox, containsPoint } from './geo.js';
 import { ALL_ASSET_TYPES, ASSET_LAYERS, addLayers, placeLayer, setAssets, setSelected, showView } from './layers.js';
-import { about, assetPopup, finding, legend, parcelPopup, placePanel } from './panel.js';
+import { about, assetPopup, assetTip, finding, legend, parcelPopup, placePanel } from './panel.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const isMobile = () => matchMedia('(max-width: 760px)').matches;
 
 const state = { view: 'county', selected: null, assetsOn: false, assetTypes: new Set(ALL_ASSET_TYPES) };
-let map, places, shapes, popup, hovered = null;
+let map, places, shapes, popup, hoverTip, hovered = null;
 
 async function loadData() {
   const get = (url) => fetch(url).then((r) => {
@@ -79,8 +80,9 @@ function setView(view, { keepPanel = false } = {}) {
 }
 
 function fillAssetTypes() {
+  const total = (code) => places.STATE.assets[code]?.[0] ?? 0;
   $('#asset-type-list').innerHTML = Object.entries(ASSET_TYPES).map(([code, label]) =>
-    `<label class="check"><input type="checkbox" value="${code}" checked>${label}</label>`).join('');
+    `<label class="check"><input type="checkbox" value="${code}" checked>${label}<span class="check-count">${count(total(code))}</span></label>`).join('');
 }
 
 function updateAssets() {
@@ -121,12 +123,20 @@ function showPopup(lngLat, html) {
   popup = new mapboxgl.Popup({ maxWidth: '280px', className: 'map-pop' }).setLngLat(lngLat).setHTML(html).addTo(map);
 }
 
+// One-line name tip on hovering an asset point (mouse only; phones tap for the full popup).
+function updateHoverTip(e) {
+  const f = state.assetsOn && map.queryRenderedFeatures(e.point, { layers: ['assets'] })[0];
+  if (!f) { hoverTip?.remove(); hoverTip = null; return; }
+  hoverTip ??= new mapboxgl.Popup({ closeButton: false, closeOnClick: false, offset: 10, className: 'map-pop hover-pop' });
+  hoverTip.setLngLat(f.geometry.coordinates).setHTML(assetTip(f)).addTo(map);
+}
+
 function bindMap() {
   const fills = () => ['fill', 'noparcels', 'nofema'].map((p) => placeLayer(state.view, p));
 
   map.on('click', (e) => {
     const asset = state.assetsOn && map.queryRenderedFeatures(e.point, { layers: ASSET_LAYERS })[0];
-    if (asset) return showPopup(e.lngLat, assetPopup(asset));
+    if (asset) { hoverTip?.remove(); hoverTip = null; return showPopup(e.lngLat, assetPopup(asset)); }
     const parcel = map.queryRenderedFeatures(e.point, { layers: ['parcels'] })[0];
     if (parcel) return showPopup(e.lngLat, parcelPopup(parcel));
     const place = map.queryRenderedFeatures(e.point, { layers: fills() })[0];
@@ -146,7 +156,9 @@ function bindMap() {
     }
     const clickable = f || map.queryRenderedFeatures(e.point, { layers: state.assetsOn ? [...ASSET_LAYERS, 'parcels'] : ['parcels'] }).length;
     map.getCanvas().style.cursor = clickable ? 'pointer' : '';
+    if (matchMedia('(hover: hover)').matches) updateHoverTip(e);
   });
+  map.getCanvas().addEventListener('mouseleave', () => { hoverTip?.remove(); hoverTip = null; });
 
   map.on('zoomend', updateLegend);
 }

@@ -122,10 +122,13 @@ function addAssetLayers(map) {
   map.addLayer({
     id: 'assets', type: 'circle', source: 'assets', layout: hidden,
     paint: {
-      'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 2.2, 10, 4, 14, 7],
+      // In-floodplain points: bigger, white ring. Others: smaller and dim, so the at-risk ones pop.
+      'circle-radius': ['interpolate', ['linear'], ['zoom'],
+        6, ['match', ['get', 'f'], 'y', 3.2, 1.8], 10, ['match', ['get', 'f'], 'y', 5.5, 3], 14, ['match', ['get', 'f'], 'y', 9, 5.5]],
       'circle-color': assetColor,
-      'circle-stroke-color': ['match', ['get', 'f'], 'y', '#0c0d0e', 'm', '#9aa0a4', '#0c0d0e'],
-      'circle-stroke-width': ['match', ['get', 'f'], 'm', 1.2, 0.6],
+      'circle-opacity': ['match', ['get', 'f'], 'y', 1, 0.8],
+      'circle-stroke-color': ['match', ['get', 'f'], 'y', '#ffffff', 'm', '#7d8286', '#0c0d0e'],
+      'circle-stroke-width': ['match', ['get', 'f'], 'y', 1.5, 'm', 1, 0.5],
       'circle-sort-key': ['match', ['get', 'f'], 'y', 2, 1],
     },
   });
